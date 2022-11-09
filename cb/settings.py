@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-r%hog%6xjte7z9=xbr6x4vb084xeq7q)8+3po45$6x6)fjj-3%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,6 +41,8 @@ INSTALLED_APPS = [
 
     'ops',
     'client',
+    
+    'ebhealthcheck.apps.EBHealthCheckConfig',
 
     
 ]
@@ -81,8 +83,12 @@ WSGI_APPLICATION = 'cb.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'crms',
+        'USER': 'admin',
+        'PASSWORD': 'shail8468',
+        'HOST': 'aws-crms.cixs0maipapr.ap-south-1.rds.amazonaws.com',
+        'PORT': 3306,
     }
 }
 
