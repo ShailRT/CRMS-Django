@@ -21,7 +21,7 @@ class Campaign(models.Model):
     quantity = models.IntegerField()
     sent = models.IntegerField(default=0)
     # file = models.FileField(upload_to='leads/%Y/%m/%d')
-
+    
     def __str__(self):
         return f"{self.user} - {self.course} - {self.city}"
 
@@ -31,6 +31,9 @@ class Heap(models.Model):
     phone = models.CharField(max_length=10)
     city = models.CharField(max_length=100)
     course = models.CharField(max_length=100)
+    users = models.ManyToManyField(ClientUser, related_name="users", null=True, blank=True)
+
+    
 
     def __str__(self):
         return self.name
@@ -41,6 +44,9 @@ class LeadFile(models.Model):
     leads = models.FileField()
     quantity = models.IntegerField()
     date_created = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-date_created']
 
     def __str__(self):
         return f"{self.campaign} - {self.date_created}"
@@ -52,3 +58,6 @@ class UploadFile(models.Model):
 
     def __str__(self):
         return f"{self.date_created}"
+
+
+    

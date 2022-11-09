@@ -37,7 +37,8 @@ def campaign(request, pk):
     lead_list = LeadFile.objects.filter(campaign = camp)
     context={
         'campaign': camp,
-        'lead_list': lead_list
+        'lead_list': lead_list,
+        'user': request.user
     }
 
     return render(request, 'client-campaign.html', context)
@@ -61,6 +62,8 @@ def lead_pack(request):
     context = {
         'headings': headings,
         'leads': row,
+        'user': request.user,
+        'lead_download': lead_pack.leads.url
     }
     return render(request, 'lead-pack.html', context)
 

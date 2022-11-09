@@ -81,31 +81,16 @@
             <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
               <!-- Search -->
               <div class="navbar-nav align-items-center">
-                <div class="nav-item d-flex align-items-center">
-                  <i class="bx bx-search fs-4 lh-0"></i>
-                  <input
-                    type="text"
-                    class="form-control border-0 shadow-none"
-                    placeholder="Search..."
-                    aria-label="Search..."
-                  />
+                <div class="nav-item d-flex align-items-center text-black">
+                  {% comment %} <i class="bx bx-search fs-4 lh-0"></i> {% endcomment %}
+                   <b>CRMS</b>
                 </div>
               </div>
               <!-- /Search -->
 
               <ul class="navbar-nav flex-row align-items-center ms-auto">
                 <!-- Place this tag where you want the button to render. -->
-                <li class="nav-item lh-1 me-3">
-                  <a
-                    class="github-button"
-                    href="https://github.com/themeselection/sneat-html-admin-template-free"
-                    data-icon="octicon-star"
-                    data-size="large"
-                    data-show-count="true"
-                    aria-label="Star themeselection/sneat-html-admin-template-free on GitHub"
-                    >Star</a
-                  >
-                </li>
+                
 
                 <!-- User -->
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
@@ -124,8 +109,8 @@
                             </div>
                           </div>
                           <div class="flex-grow-1">
-                            <span class="fw-semibold d-block">John Doe</span>
-                            <small class="text-muted">Admin</small>
+                            <span class="fw-semibold d-block">{{campaign.user.user.username}}</span>
+                            <small class="text-muted">Staff</small>
                           </div>
                         </div>
                       </a>
@@ -133,30 +118,7 @@
                     <li>
                       <div class="dropdown-divider"></div>
                     </li>
-                    <li>
-                      <a class="dropdown-item" href="#">
-                        <i class="bx bx-user me-2"></i>
-                        <span class="align-middle">My Profile</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#">
-                        <i class="bx bx-cog me-2"></i>
-                        <span class="align-middle">Settings</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#">
-                        <span class="d-flex align-items-center align-middle">
-                          <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
-                          <span class="flex-grow-1 align-middle">Billing</span>
-                          <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
-                        </span>
-                      </a>
-                    </li>
-                    <li>
-                      <div class="dropdown-divider"></div>
-                    </li>
+                    
                     <li>
                       <a class="dropdown-item" href="{% url 'logout' %}">
                         <i class="bx bx-power-off me-2"></i>
@@ -282,8 +244,7 @@
                 <div class="col-xxl">
                   <div class="card mb-4">
                     <div class="card-header d-flex align-items-center justify-content-between">
-                      <h5 class="mb-0">Basic Layout</h5>
-                      <small class="text-muted float-end">Default label</small>
+                      <h5 class="mb-0">Campaign Details</h5>
                     </div>
                     <div class="card-body">
                       <form>
@@ -339,6 +300,21 @@
                               aria-describedby="basic-default-phone"
                               readonly/>
                           </div>
+                          
+                        </div>
+                        <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label" for="basic-default-phone">Sent</label>
+                          <div class="col-sm-10">
+                            <input
+                              type="text"
+                              id="basic-default-phone"
+                              class="form-control phone-mask"
+                              placeholder="{{campaign.sent}}"
+                              aria-label="658 799 8941"
+                              aria-describedby="basic-default-phone"
+                              readonly/>
+                          </div>
+                          
                         </div>
                         
                         <div class="row justify-content-end">
@@ -439,12 +415,12 @@
                 </div> {% endcomment %}
               </div>
               <div class="card mb-4">
-                <h5 class="card-header">List groups</h5>
+                <h5 class="card-header">Lead Management</h5>
                 <div class="card-body">
                   <div class="row">
                     <!-- Order Statistics -->
                     <div class="col-lg-6 mb-4 mb-xl-0">
-                      <div class="demo-inline-spacing mt-3">
+                      <div class="demo-inline-spacing mt-3 mb-4">
                         <div class="row mb-3">
                           <label class="col-sm-4 col-form-label" for="basic-default-company">Push leads</label>
                           <div class="col-sm-8">
@@ -770,27 +746,10 @@
                   <script>
                     document.write(new Date().getFullYear());
                   </script>
-                  , made with ❤️ by
-                  <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
+                  , made by
+                  <a href="javascript:void()" class="footer-link fw-bolder">Shailesh Rawat</a>
                 </div>
-                <div>
-                  <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
-                  <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
-
-                  <a
-                    href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-                    target="_blank"
-                    class="footer-link me-4"
-                    >Documentation</a
-                  >
-
-                  <a
-                    href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-                    target="_blank"
-                    class="footer-link me-4"
-                    >Support</a
-                  >
-                </div>
+                
               </div>
             </footer>
             <!-- / Footer -->
@@ -807,15 +766,7 @@
     </div>
     <!-- / Layout wrapper -->
 
-    <div class="buy-now">
-      <a
-        href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/"
-        target="_blank"
-        class="btn btn-danger btn-buy-now"
-        >Upgrade to Pro</a
-      >
-    </div>
-
+    
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
     <script src="{% static 'assets/vendor/libs/jquery/jquery.js' %}"></script>

@@ -1,6 +1,6 @@
 from turtle import heading
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import auth
+from django.contrib.auth.models import auth, User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Campaign, OpsUser, Heap, LeadFile, ClientUser, UploadFile
@@ -10,16 +10,24 @@ from django.http import HttpResponse
 import os 
 from django.conf import settings
 from datetime import datetime
+from client.models import ClientUser
 
 # Create your views here.
 @login_required(login_url='signin')
 def index(request):
-    ops_user = OpsUser.objects.filter(user=request.user).first()
-    campaign_list = Campaign.objects.filter(user=ops_user)
-
+    if request.method=="POST":
+        new_user = User.objects.create_user(username=request.POST['name'], password=request.POST['password'])
+        new_user.save()
+        new_user = User.objects.filter(username=request.POST['name']).first()
+        client_user = ClientUser.objects.create(user=new_user)
+        client_user.save()
+        return redirect('home')
+    client_list = ClientUser.objects.all()
+    user = request.user
     context = {
-        'campaign_list': campaign_list,
-        'lencamp': len(campaign_list)
+        'client_list': client_list,
+        'lencamp': len(client_list),
+        'user': user
     }
     return render(request, 'html/index.html', context)
 
@@ -27,13 +35,23 @@ def index(request):
 def push(request, pk):
     ops_user = OpsUser.objects.filter(user=request.user).first()
     camp_object = Campaign.objects.filter(user=ops_user, camp_name=pk).first()
-    qty = request.GET.get('quantity')
-    leads = Heap.objects.filter(city=camp_object.city, course=camp_object.course)[:(int(qty))]
-    headings = ['Name','Phone', 'Course', 'City']
+    qty = int(request.GET.get('quantity'))
+    counter = 0
+    sent = 0
     uuids = ""
-    for lead in leads:
-        uuids+=f"{lead.lead_id} "
-    return render(request, 'push.html', {'leads': leads, 'headings': headings, 'camp_object': camp_object, 'uuids': uuids})
+    leads = []
+    heap_qty = len(Heap.objects.all())
+    while qty>0 and heap_qty>=counter and len(Heap.objects.filter(city=camp_object.city, course=camp_object.course)) > counter:
+        lead = Heap.objects.filter(city=camp_object.city, course=camp_object.course)[counter]
+        if camp_object.client not in lead.users.all():
+            leads.append(lead)
+            uuids+=f"{lead.lead_id} "
+            qty-=1
+            sent+=1
+        counter+=1
+
+    headings = ['Name','Phone', 'Course', 'City']
+    return render(request, 'push.html', {'leads': leads, 'headings': headings, 'camp_object': camp_object, 'uuids': uuids, 'user': request.user, 'sent': sent})
 
 
 @login_required(login_url='signin')
@@ -62,10 +80,11 @@ def push_history(request):
                 headings+=i
             else:
                 row.append(i)
-
+    user = request.user
     context = {
         'headings': headings,
         'leads': row,
+        'user': user,
     }
     return render(request, 'push-history.html', context)
 
@@ -76,7 +95,7 @@ def signin(request):
 
         user = auth.authenticate(username=username, password=password)
 
-        if user is not None:
+        if user is not None and user.is_staff:
             auth.login(request, user)
             return redirect('home')
         else:
@@ -125,12 +144,13 @@ def create_lead(request, pk):
         lead_object = []
         for id in uuids:
             lead = Heap.objects.filter(lead_id=id).first()
+            lead.users.add(camp_object.client)
             lead_object.append([lead.name, lead.phone, lead.course, lead.city])
          
         headings = ['Name','Phone', 'Course', 'City']
         now = datetime.now()
 
-        current_time = now.strftime("%H-%M")
+        current_time = now.strftime("%H-%M-%S")
         path = os.path.join(settings.MEDIA_ROOT, f'{request.user.username}-{camp_object.camp_name}-{current_time}.csv')
         with open(path, 'w', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
@@ -139,18 +159,21 @@ def create_lead(request, pk):
         
         new_lead = LeadFile.objects.create(campaign=camp_object, leads=path, quantity=len(lead_object))
         new_lead.save()
-        for uuid in uuids:
-            delete_lead = Heap.objects.filter(lead_id=uuid).first()
-            delete_lead.delete()
+        camp_object.sent += len(lead_object)
+        camp_object.save()
+        # Delete Leads 
+        # for uuid in uuids:
+        #     delete_lead = Heap.objects.filter(lead_id=uuid).first()
+        #     delete_lead.delete()
         
         
         return redirect('home')
         
 @login_required(login_url='signin')
-def camp_create(request):
+def camp_create(request, pk):
     if request.method == "POST":
         ops_user = OpsUser.objects.filter(user=request.user).first()
-        client_user = ClientUser.objects.filter(user=request.user).first()
+        client_user = ClientUser.objects.filter(id=int(pk)).first()
         camp_name = request.POST['name']
         course = request.POST['course']
         city = request.POST['city']
@@ -163,6 +186,7 @@ def camp_create(request):
     else:
         return redirect('home')
 
+@login_required(login_url='signin')
 def heap_upload(request):
     headings = ['Name','Phone', 'Course', 'City']
 
@@ -203,7 +227,8 @@ def heap_upload(request):
             'leads': leads,
             'exist': exist_count,
             'created': create_count,
-            'exist_uuid': exist_uuid
+            'exist_uuid': exist_uuid,
+            'user': request.user,
         }
         return render(request, 'heap-push.html', context)
 
@@ -217,7 +242,44 @@ def heap_upload(request):
     context = {
         'headings': headings,
         'leads' : leads,
+        'user': request.user,
     }
 
 
     return render(request, 'heap-push.html', context)
+
+@login_required(login_url='signin')
+def create_user(request):
+    if request.method=="POST":
+        new_user = User.objects.create_user(username=request.POST['name'], password=request.POST['password'])
+        new_user.save()
+        new_user = User.objects.filter(username=request.POST['name']).first()
+        client_user = ClientUser.objects.create(user=new_user)
+        client_user.save()
+        return redirect('create-user')
+    return render(request,'create-user.html')
+
+@login_required(login_url='signin')
+def client_detail(request,pk):
+    if request.method=="POST":
+        name = request.POST['clname']
+        phone = request.POST['clphone']
+        company = request.POST['clcompany']
+        email = request.POST['clemail']
+        update_cl = ClientUser.objects.filter(id=pk).first()
+        update_cl.user.save()
+        update_cl.phone = phone
+        update_cl.company = company 
+        update_cl.email = email 
+        update_cl.save()
+        return redirect('client-detail',pk=pk)
+    id = int(pk) 
+    cl_user = ClientUser.objects.filter(id=id).first()
+    campaign_list = Campaign.objects.filter(client=cl_user)
+
+    context = {
+        'campaign_list': campaign_list,
+        'lencamp': len(campaign_list),
+        'user': cl_user,
+    }
+    return render(request, 'client-detail.html', context)
