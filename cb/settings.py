@@ -41,8 +41,8 @@ INSTALLED_APPS = [
 
     'ops',
     'client',
-    
-    'ebhealthcheck.apps.EBHealthCheckConfig',
+
+    # 'ebhealthcheck.apps.EBHealthCheckConfig',
 
     
 ]
@@ -83,12 +83,8 @@ WSGI_APPLICATION = 'cb.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'crms',
-        'USER': 'admin',
-        'PASSWORD': 'shail8468',
-        'HOST': 'aws-crms.cixs0maipapr.ap-south-1.rds.amazonaws.com',
-        'PORT': 3306,
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
