@@ -138,7 +138,7 @@ def table(request):
 def create_lead(request, pk):
     if request.method=="POST":
         user_object = OpsUser.objects.filter(user=request.user).first()
-        camp_object = Campaign.objects.filter(user=user_object, camp_name=pk).first()
+        camp_object = Campaign.objects.filter(user=user_object, id=pk).first()
         uuids = request.POST['uuids']
         uuids = uuids.split()
         lead_object = []
@@ -167,7 +167,7 @@ def create_lead(request, pk):
         #     delete_lead.delete()
         
         
-        return redirect('home')
+        return redirect('campaign', pk=pk)
         
 @login_required(login_url='signin')
 def camp_create(request, pk):
@@ -181,10 +181,10 @@ def camp_create(request, pk):
 
         new_camp = Campaign.objects.create(user=ops_user, client=client_user, camp_name=camp_name, course=course, city=city, quantity=quantity)
         new_camp.save()
-        return redirect('home')
+        return redirect('client-detail', pk=pk)
         
     else:
-        return redirect('home')
+        return redirect('client-detail', pk=pk)
 
 @login_required(login_url='signin')
 def heap_upload(request):

@@ -159,7 +159,14 @@
             </form>
             <!-- Basic Bootstrap Table -->
             <div class="card">
-              <h5 class="card-header">{{camp_object.camp_name}}</h5>
+              <h5 class="card-header">
+                <b>Campaign</b> : {{camp_object.camp_name}} &nbsp;&nbsp;
+                <b>Leads Present</b> : {% if sent %}
+                {{sent}}
+                {% else %}
+                0
+                {% endif %} 
+              </h5>
               <div class="table-responsive text-nowrap">
                 <table class="table">
                   <thead>
@@ -232,7 +239,7 @@
                   </tbody>
                 </table>
                 <div class="col-sm-8 m-3">
-                  <form method="POST" action="{% url 'create-lead' camp_object.camp_name %}">
+                  <form method="POST" action="{% url 'create-lead' camp_object.id %}">
                     {% csrf_token %}
                     <input type="hidden" value="{{uuids}}" name="uuids">
                   <button type="submit" class="btn btn-primary">Send</button>
