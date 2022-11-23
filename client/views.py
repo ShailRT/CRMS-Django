@@ -33,7 +33,7 @@ def dashboard(request):
 
 @login_required(login_url='client-login')
 def campaign(request, pk):
-    camp = Campaign.objects.filter(camp_name=pk).first()
+    camp = Campaign.objects.filter(id=pk).first()
     lead_list = LeadFile.objects.filter(campaign = camp)
     context={
         'campaign': camp,

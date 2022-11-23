@@ -270,7 +270,7 @@
                               <small class="text-light fw-semibold">Created</small>
                               <div class="list-group">
                                 {% for ca in campaign_list%}
-                                  <a href="{% url 'campaign' ca.camp_name %}" class="list-group-item list-group-item-action"
+                                  <a href="{% url 'campaign' ca.id %}" class="list-group-item list-group-item-action"
                                     >{{ca.camp_name}}</a
                                   >
                                 {% endfor %}
