@@ -9,7 +9,7 @@ import csv
 from django.http import HttpResponse
 import os 
 from django.conf import settings
-from datetime import datetime
+from datetime import datetime, date
 from client.models import ClientUser
 
 # Create your views here.
@@ -53,17 +53,79 @@ def push(request, pk):
     headings = ['Name','Phone', 'Course', 'City']
     return render(request, 'push.html', {'leads': leads, 'headings': headings, 'camp_object': camp_object, 'uuids': uuids, 'user': request.user, 'sent': sent})
 
-
 @login_required(login_url='signin')
 def campaign(request,pk):
-    camp = Campaign.objects.filter(id=pk).first()
-    lead_list = LeadFile.objects.filter(campaign = camp)
-    context={
-        'campaign': camp,
-        'lead_list': lead_list
-    }
+    if request.method == "POST":
+        camp_name = request.POST['camp_name']
+        course = request.POST['course']
+        city = request.POST['city']
+        camp = Campaign.objects.filter(id=pk).first()
+        camp.camp_name = camp_name
+        camp.course = course
+        camp.city = city
+        camp.save()
+        return redirect('campaign', pk=pk)
+    else:
+        camp = Campaign.objects.filter(id=pk).first()
+        lead_list = LeadFile.objects.filter(campaign = camp)
+        total_leads = []
+        courses = list(camp.course.split(','))
+        cities = list(camp.city.split(','))
+        all_leads = {}
+        to_date = request.GET.get('todate')
+        from_date = request.GET.get('fromdate')
+        for i in courses:
+            all_leads[i] = Heap.objects.filter(course=i)
 
-    return render(request, 'campaign.html', context)
+        for i in all_leads.keys():
+            for j in all_leads[i]:
+                    for city in cities:
+                        if j.city==city:
+                            total_leads.append(j)
+        fin_leads = []
+        for i in total_leads:
+            if i.date_created != None:
+                date_created = i.date_created.split('-')
+                date_check_to = to_date.split('-')
+                date_check_from = from_date.split('-')
+                # if int(date_check[0])>int(date_created[0]):
+                #     fin_leads.append(i)
+                # elif int(date_check[0])==int(date_created[0]):
+                #     if int(date_check[1])>int(date_created[1]):
+                #         fin_leads.append(i)
+                #     elif int(date_check[1])==int(date_created[1]):
+                #         if int(date_check[2])>=int(date_created[1]):
+                #             fin_leads.append(i)
+                #     else:
+                #         continue
+                # else:
+                #     continue
+                for j in range(len(date_check_to)+1):
+                    if j==len(date_check_to):
+                        fin_leads.append(i)
+                        break
+                    if int(date_check_to[j])>int(date_created[j]) and int(date_check_from[j])<int(date_created[j]):
+                        fin_leads.append(i)
+                        break
+                    elif int(date_check_to[j])<int(date_created[j]) or int(date_check_from[j])>int(date_created[j]):
+                        break
+
+        tot_lead = len(fin_leads)
+        uuids = ""
+        
+        for i in fin_leads:
+            print(i.name, i.date_created)
+            uuids+=f"{i.lead_id} "
+
+
+        context={
+            'campaign': camp,
+            'lead_list': lead_list,
+            'tot_lead': tot_lead,
+            'uuids': uuids
+        }
+
+        return render(request, 'campaign.html', context)
 
 @login_required(login_url='signin')
 def push_history(request):
@@ -85,6 +147,7 @@ def push_history(request):
         'headings': headings,
         'leads': row,
         'user': user,
+        'lead_download': lead_object.leads.url,
     }
     return render(request, 'push-history.html', context)
 
@@ -145,9 +208,9 @@ def create_lead(request, pk):
         for id in uuids:
             lead = Heap.objects.filter(lead_id=id).first()
             lead.users.add(camp_object.client)
-            lead_object.append([lead.name, lead.phone, lead.course, lead.city])
+            lead_object.append([lead.name, lead.phone, lead.course, lead.city, lead.date_created])
          
-        headings = ['Name','Phone', 'Course', 'City']
+        headings = ['Name','Phone', 'Course', 'City', 'Date']
         now = datetime.now()
 
         current_time = now.strftime("%H-%M-%S")
@@ -166,8 +229,8 @@ def create_lead(request, pk):
         #     delete_lead = Heap.objects.filter(lead_id=uuid).first()
         #     delete_lead.delete()
         
-        
-        return redirect('campaign', pk=pk)
+        date_today = date.today()
+        return redirect(f'/ops/campaign/{pk}?todate={date_today}&fromdate={date_today}')
         
 @login_required(login_url='signin')
 def camp_create(request, pk):
@@ -176,8 +239,15 @@ def camp_create(request, pk):
         client_user = ClientUser.objects.filter(id=int(pk)).first()
         camp_name = request.POST['name']
         course = request.POST['course']
+        course = course.replace('[','')
+        course = course.replace(']','')
+        course = course.replace('"','')
         city = request.POST['city']
+        city = city.replace('[','')
+        city = city.replace(']','')
+        city = city.replace('"','')
         quantity = request.POST['quantity']
+
 
         new_camp = Campaign.objects.create(user=ops_user, client=client_user, camp_name=camp_name, course=course, city=city, quantity=quantity)
         new_camp.save()
@@ -188,7 +258,7 @@ def camp_create(request, pk):
 
 @login_required(login_url='signin')
 def heap_upload(request):
-    headings = ['Name','Phone', 'Course', 'City']
+    headings = ['Name','Phone', 'Course', 'City', 'Date']
 
     if request.method == "POST":
         csv_file = request.FILES.get('csv-upload')
@@ -206,38 +276,40 @@ def heap_upload(request):
                 if counter==0:
                     headings=row
                 else:
-                    if Heap.objects.filter(name=row[0], phone=row[1], course=row[2], city=row[3]).exists():
-                        exist_count+=1
-                        temp = Heap.objects.filter(name=row[0], phone=row[1], course=row[2], city=row[3]).first()
-                        exist_uuid.append(temp.lead_id)
-                    else:
-                        heap_obj = Heap.objects.create(name=row[0], phone=row[1], course=row[2], city=row[3])
-                        heap_obj.save()
-                        create_count+=1
+                    # if Heap.objects.filter(name=row[0], phone=row[1], course=row[2], city=row[3], date_created=row[4]).exists():
+                    #     exist_count+=1
+                    #     temp = Heap.objects.filter(name=row[0], phone=row[1], course=row[2], city=row[3], date_created=row[4]).first()
+                    #     exist_uuid.append(temp.lead_id)
+                    # else:
+                    date = datetime.strptime(row[4], '%Y-%m-%d %H:%M:%S')
+                    date = date.strftime('%Y-%m-%d')
+                    heap_obj = Heap.objects.create(name=row[0], phone=row[1], course=row[2], city=row[3], date_created=date)
+                    heap_obj.save()
+                    create_count+=1
                 counter+=1
 
-        lead_list = Heap.objects.all()
-        leads = []
-        for lead in lead_list:
-            leads.append([lead.name, lead.phone, lead.course, lead.city])
+        # lead_list = Heap.objects.all()
+        # leads = []
+        # for lead in lead_list:
+        #     leads.append([lead.name, lead.phone, lead.course, lead.city, lead.date_created])
     
 
-        context = {
-            'headings': headings,
-            'leads': leads,
-            'exist': exist_count,
-            'created': create_count,
-            'exist_uuid': exist_uuid,
-            'user': request.user,
-        }
-        return render(request, 'heap-push.html', context)
+        # context = {
+        #     'headings': headings,
+        #     'leads': leads,
+        #     'exist': exist_count,
+        #     'created': create_count,
+        #     # 'exist_uuid': exist_uuid,
+        #     'user': request.user,
+        # }
+        return redirect('heap-push')
 
 
 
     lead_list = Heap.objects.all()
     leads = []
     for lead in lead_list:
-        leads.append([lead.name, lead.phone, lead.course, lead.city])
+        leads.append([lead.name, lead.phone, lead.course, lead.city, lead.date_created])
     
     context = {
         'headings': headings,
@@ -282,4 +354,6 @@ def client_detail(request,pk):
         'lencamp': len(campaign_list),
         'user': cl_user,
     }
+    
     return render(request, 'client-detail.html', context)
+

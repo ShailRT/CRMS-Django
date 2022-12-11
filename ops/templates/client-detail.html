@@ -38,22 +38,26 @@
   <link rel="stylesheet" href="{% static 'assets/vendor/css/core.css'%}" class="template-customizer-core-css" />
   <link rel="stylesheet" href="{% static 'assets/vendor/css/theme-default.css'%}" class="template-customizer-theme-css" />
   <link rel="stylesheet" href="{% static 'assets/css/demo.css'%}" />
-
+  
   <!-- Vendors CSS -->
   <link rel="stylesheet" href="{% static 'assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css'%}" />
-
+  
   <!-- Page CSS -->
-
+  
   <!-- Helpers -->
   <script src="{% static 'assets/vendor/js/helpers.js'%}"></script>
-
+  
   <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-  <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-  <script src="{% static 'assets/js/config.js'%}"></script>
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="{% static 'assets/js/config.js'%}"></script>
+    <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+
 </head>
 
   <body>
     <!-- Layout wrapper -->
+    
     <div class="layout-wrapper layout-content-navbar">
       <div class="layout-container">
         <!-- Menu -->
@@ -207,12 +211,13 @@
                   </div>
                   
                 </div>
+                
                 <div class"col-md-12">
                   <div class="card">
                     <h5 class="card-header">Create Campaign</h5>
                     <div class="card-body">
                       <div class="row justify-content-between">
-                        <div class="col-7">
+                        <div class="col-12">
                           <form action="{% url 'camp-create' pk=user.id %}" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="mb-3">
@@ -225,42 +230,27 @@
                                 aria-describedby="defaultFormControlHelp"
                                 name="name"
                               />
-                              <label for="defaultFormControlInput" class="form-label">Course</label>
-                              <input type="text" class="form-control" list="datalistOptions" id="defaultFormControlInput" placeholder="Course" aria-describedby="defaultFormControlHelp" name="course">
-                                <datalist id="datalistOptions">
-                                  <option value="BBA/BBM">
-                                  <option value="MBA/PGDM">
-                                  <option value="BCA">
-                                  <option value="MCA">
-                                  <option value="B.Com">
-                                  <option value="M.Com">
-                                </datalist>
+
                               
-                              <label for="defaultFormControlInput" class="form-label">City</label>
-                              <input type="text" class="form-control" list="datalistOptions2" id="defaultFormControlInput" placeholder="City" aria-describedby="defaultFormControlHelp" name="city">
-                                <datalist id="datalistOptions2">
-                                  <option value="Gopalganj">
-                                  <option value="Srikakulam">
-                                  <option value="Ahmednagar">
-                                  <option value="Jalna">
-                                  <option value="Purnea">
-                                  <option value="Ranchi">
-                                  <option value="Nagpur">
-                                  <option value="Jaipur">
-                                  <option value="Azamgarh">
-                                  <option value="Shimoga">
-                                  <option value="New Delhi">
-                                  <option value="Kolhapur">
-                                  <option value="Noida">
-                                  <option value="Mumbai">
-                                  <option value="Rajkot">
-                                  <option value="Badaun">
-                                  <option value="Bangalore">
-                                  <option value="Coimbatore">
-                                  <option value="Pune">
-                                  <option value="Muzaffarpur"> 
-                                  <option value="Chennai"> 
-                                </datalist>
+                              <div class="row">
+                                <div class="col-6">
+                                  <label for="defaultFormControlInput" class="form-label">Course</label>
+                                  <div class="select-item-list--single">
+                                    <div class="directorist-select directorist-select-multi" id="multiSelect" data-isSearch="true" data-multiSelect="['BCA', 'B.Com', 'M.Com', 'BBA']" >               
+                                        <input type="hidden" name="course" class="form-control" aria-describedby="defaultFormControlHelp">
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                <div class="col-6">
+                                  <label for="defaultFormControlInput" class="form-label">City</label>
+                                  <div class="select-item-list--single">
+                                    <div class="directorist-select directorist-select-multi" id="multiSelect2" data-isSearch="true" data-multiSelect="['New Delhi', 'Mumbai', 'Chennai', 'Noida']" >               
+                                        <input type="hidden" name="city" class="form-control" aria-describedby="defaultFormControlHelp">
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                               
                               <label for="defaultFormControlInput" class="form-label">Quantity</label>
                               <input
@@ -289,7 +279,7 @@
                               <small class="text-light fw-semibold">Created</small>
                               <div class="list-group">
                                 {% for ca in campaign_list%}
-                                  <a href="{% url 'campaign' ca.id %}" class="list-group-item list-group-item-action"
+                                  <a href="{% url 'campaign' ca.id %}?todate={% now "Y-m-d" %}&fromdate={% now "Y-m-d" %}" class="list-group-item list-group-item-action"
                                     >{{ca.camp_name}}</a
                                   >
                                 {% endfor %}
@@ -332,6 +322,9 @@
       <!-- Overlay -->
       <div class="layout-overlay layout-menu-toggle"></div>
     </div>
+      
+      
+
     <!-- / Layout wrapper -->
 
     
@@ -349,6 +342,14 @@
     <!-- Vendors JS -->
 
     <!-- Main JS -->
+    <script src="{% static 'js/script.js'%}"></script>
+    <script>
+      // pureScriptSelect('#select');
+      pureScriptSelect('#multiSelect');
+      pureScriptSelect('#multiSelect2');
+      pureScriptSelect('#selectImg');
+      pureScriptSelect('#selectIcon');
+    </script>
     <script src="{% static 'assets/js/main.js'%}"></script>
 
     <!-- Page JS -->

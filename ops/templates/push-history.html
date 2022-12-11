@@ -141,7 +141,10 @@
            
             <!-- Basic Bootstrap Table -->
             <div class="card">
-              <h5 class="card-header">Leads</h5>
+              <h5 class="card-header">Leads<a href="{{lead_download}}" download>
+                <button href="{{lead_download}}" class="btn btn-primary me-2 ms-5" download> Download</button>
+              </a></h5>
+              
               <div class="table-responsive text-nowrap">
                 <table class="table">
                   <thead>
@@ -162,6 +165,8 @@
                         <td>{{lead.1}}</td>
                         <td>{{lead.2}}</td>
                         <td>{{lead.3}}</td>
+                        <td>{{lead.4}}</td>
+                        
                       {% comment %} <td>
                         <ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
                           <li
