@@ -42,7 +42,9 @@ def push(request, pk):
     leads = []
     heap_qty = len(Heap.objects.all())
     while qty>0 and heap_qty>=counter and len(Heap.objects.filter(city=camp_object.city, course=camp_object.course)) > counter:
-        lead = Heap.objects.filter(city=camp_object.city, course=camp_object.course)[counter]
+        city = list(camp_object.city.split(','))[0]
+        course = list(camp_object.course.split(','))[0]
+        lead = Heap.objects.filter(city=city, course=course)[counter]
         if camp_object.client not in lead.users.all():
             leads.append(lead)
             uuids+=f"{lead.lead_id} "
@@ -50,7 +52,7 @@ def push(request, pk):
             sent+=1
         counter+=1
 
-    headings = ['Name','Phone', 'Course', 'City']
+    headings = ['Name','Phone', 'Course', 'City', 'State', 'Date']
     return render(request, 'push.html', {'leads': leads, 'headings': headings, 'camp_object': camp_object, 'uuids': uuids, 'user': request.user, 'sent': sent})
 
 @login_required(login_url='signin')
@@ -59,6 +61,7 @@ def campaign(request,pk):
         camp_name = request.POST['camp_name']
         course = request.POST['course']
         city = request.POST['city']
+        state = request.POST['state']
         camp = Campaign.objects.filter(id=pk).first()
         camp.camp_name = camp_name
         camp.course = course
@@ -71,35 +74,44 @@ def campaign(request,pk):
         total_leads = []
         courses = list(camp.course.split(','))
         cities = list(camp.city.split(','))
+        states = list(camp.state.split(','))
         all_leads = {}
         to_date = request.GET.get('todate')
         from_date = request.GET.get('fromdate')
-        for i in courses:
-            all_leads[i] = Heap.objects.filter(course=i)
 
-        for i in all_leads.keys():
-            for j in all_leads[i]:
+        if courses[0] != "":
+            for i in courses:
+                all_leads[i] = Heap.objects.filter(course=i)
+        else:
+            all_leads['all'] = Heap.objects.all()
+
+        if states[0] == "" and cities[0] == "":
+            for i in all_leads.keys():
+                for j in all_leads[i]:
+                    total_leads.append(j)
+        else:
+            for i in all_leads.keys():
+                for j in all_leads[i]:
+                    flag = False
+                    for state in states:
+                        if j.state == state:
+                            total_leads.append(j)
+                            flag = True
+                            break
+                    if flag:
+                        continue
                     for city in cities:
                         if j.city==city:
                             total_leads.append(j)
+            
+
         fin_leads = []
         for i in total_leads:
             if i.date_created != None:
                 date_created = i.date_created.split('-')
                 date_check_to = to_date.split('-')
                 date_check_from = from_date.split('-')
-                # if int(date_check[0])>int(date_created[0]):
-                #     fin_leads.append(i)
-                # elif int(date_check[0])==int(date_created[0]):
-                #     if int(date_check[1])>int(date_created[1]):
-                #         fin_leads.append(i)
-                #     elif int(date_check[1])==int(date_created[1]):
-                #         if int(date_check[2])>=int(date_created[1]):
-                #             fin_leads.append(i)
-                #     else:
-                #         continue
-                # else:
-                #     continue
+                
                 for j in range(len(date_check_to)+1):
                     if j==len(date_check_to):
                         fin_leads.append(i)
@@ -112,9 +124,7 @@ def campaign(request,pk):
 
         tot_lead = len(fin_leads)
         uuids = ""
-        
         for i in fin_leads:
-            print(i.name, i.date_created)
             uuids+=f"{i.lead_id} "
 
 
@@ -208,9 +218,9 @@ def create_lead(request, pk):
         for id in uuids:
             lead = Heap.objects.filter(lead_id=id).first()
             lead.users.add(camp_object.client)
-            lead_object.append([lead.name, lead.phone, lead.course, lead.city, lead.date_created])
+            lead_object.append([lead.name, lead.phone, lead.course, lead.city, lead.state, lead.date_created])
          
-        headings = ['Name','Phone', 'Course', 'City', 'Date']
+        headings = ['Name','Phone', 'Course', 'City', 'State', 'Date']
         now = datetime.now()
 
         current_time = now.strftime("%H-%M-%S")
@@ -246,10 +256,14 @@ def camp_create(request, pk):
         city = city.replace('[','')
         city = city.replace(']','')
         city = city.replace('"','')
+        state = request.POST['state']
+        state = state.replace('[','')
+        state = state.replace(']','')
+        state = state.replace('"','')
         quantity = request.POST['quantity']
 
 
-        new_camp = Campaign.objects.create(user=ops_user, client=client_user, camp_name=camp_name, course=course, city=city, quantity=quantity)
+        new_camp = Campaign.objects.create(user=ops_user, client=client_user, camp_name=camp_name, course=course, city=city, state=state, quantity=quantity)
         new_camp.save()
         return redirect('client-detail', pk=pk)
         
@@ -258,7 +272,7 @@ def camp_create(request, pk):
 
 @login_required(login_url='signin')
 def heap_upload(request):
-    headings = ['Name','Phone', 'Course', 'City', 'Date']
+    headings = ['Name','Phone', 'Course', 'City', 'State', 'Date']
 
     if request.method == "POST":
         csv_file = request.FILES.get('csv-upload')
@@ -281,9 +295,9 @@ def heap_upload(request):
                     #     temp = Heap.objects.filter(name=row[0], phone=row[1], course=row[2], city=row[3], date_created=row[4]).first()
                     #     exist_uuid.append(temp.lead_id)
                     # else:
-                    date = datetime.strptime(row[4], '%Y-%m-%d %H:%M:%S')
+                    date = datetime.strptime(row[5], '%Y-%m-%d %H:%M:%S')
                     date = date.strftime('%Y-%m-%d')
-                    heap_obj = Heap.objects.create(name=row[0], phone=row[1], course=row[2], city=row[3], date_created=date)
+                    heap_obj = Heap.objects.create(name=row[0], phone=row[1], course=row[2], city=row[3], state=row[4], date_created=date)
                     heap_obj.save()
                     create_count+=1
                 counter+=1
@@ -309,7 +323,7 @@ def heap_upload(request):
     lead_list = Heap.objects.all()
     leads = []
     for lead in lead_list:
-        leads.append([lead.name, lead.phone, lead.course, lead.city, lead.date_created])
+        leads.append([lead.name, lead.phone, lead.course, lead.city, lead.state, lead.date_created])
     
     context = {
         'headings': headings,

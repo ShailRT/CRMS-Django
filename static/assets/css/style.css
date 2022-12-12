@@ -171,7 +171,7 @@ body{
     padding: 15px;
     box-sizing: border-box;
     margin-top: 2px;
-    max-height: 400px;
+    max-height: 150px;
     overflow-y: auto;
 }
 .directorist-select.directorist-select-multi .directorist-select__container .directorist-select__dropdown ul{
