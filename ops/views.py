@@ -227,7 +227,7 @@ def create_lead(request, pk):
             writer.writerow(headings)
             writer.writerows(lead_object)
         
-        new_lead = LeadFile.objects.create(campaign=camp_object, leads=path, quantity=len(lead_object))
+        new_lead = LeadFile.objects.create(campaign=camp_object, leads=f"{request.user.username}-{camp_object.camp_name}-{current_time}.csv", quantity=len(lead_object))
         new_lead.save()
         camp_object.sent += len(lead_object)
         camp_object.save()
@@ -445,7 +445,7 @@ def filter_lead(request):
             writer.writerow(headings)
             writer.writerows(lead_object)
         
-        new_lead = LeadFile.objects.create(campaign=camp_object, leads=path, quantity=len(lead_object))
+        new_lead = LeadFile.objects.create(campaign=camp_object, leads=f"{request.user.username}-{camp_object.camp_name}-{current_time}.csv", quantity=len(lead_object))
         new_lead.save()
         
         return redirect('filter')
