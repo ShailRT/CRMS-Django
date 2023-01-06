@@ -1,0 +1,297 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html
+  lang="en"
+  class="light-style layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="{% static 'assets/'%}"
+  data-template="vertical-menu-template-free"
+>
+<head>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+  />
+
+  <title>filter lead</title>
+
+  <meta name="description" content="" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="{% static 'assets/img/favicon/favicon.ico'%}" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Icons. Uncomment required icon fonts -->
+  <link rel="stylesheet" href="{% static 'assets/vendor/fonts/boxicons.css'%}" />
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="{% static 'assets/vendor/css/core.css'%}" class="template-customizer-core-css" />
+  <link rel="stylesheet" href="{% static 'assets/vendor/css/theme-default.css'%}" class="template-customizer-theme-css" />
+  <link rel="stylesheet" href="{% static 'assets/css/demo.css'%}" />
+  
+  <!-- Vendors CSS -->
+  <link rel="stylesheet" href="{% static 'assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css'%}" />
+  
+  <!-- Page CSS -->
+  
+  <!-- Helpers -->
+  <script src="{% static 'assets/vendor/js/helpers.js'%}"></script>
+  
+  <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="{% static 'assets/js/config.js'%}"></script>
+    <link rel="stylesheet" href="{% static 'assets/css/style.css'%}" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+
+</head>
+
+  <body>
+    <!-- Layout wrapper -->
+    
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <!-- Menu -->
+
+        {% include 'side-nav.html' %}
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+          <!-- Navbar -->
+
+          <nav
+            class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+            id="layout-navbar"
+          >
+            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+              <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                <i class="bx bx-menu bx-sm"></i>
+              </a>
+            </div>
+
+            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+              <!-- Search -->
+              <div class="navbar-nav align-items-center">
+                <div class="nav-item d-flex align-items-center text-black">
+                  {% comment %} <i class="bx bx-search fs-4 lh-0"></i> {% endcomment %}
+                   <b>CRMS </b>
+                </div>
+              </div>
+              <!-- /Search -->
+
+              <ul class="navbar-nav flex-row align-items-center ms-auto">
+                <!-- Place this tag where you want the button to render. -->
+                
+
+                <!-- User -->
+                <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                  <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                    <div class="avatar avatar-online">
+                      <img src="{% static 'assets/img/avatars/1.png'%}" alt class="w-px-40 h-auto rounded-circle" />
+                    </div>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="#">
+                        <div class="d-flex">
+                          <div class="flex-shrink-0 me-3">
+                            <div class="avatar avatar-online">
+                              <img src="{% static 'assets/img/avatars/1.png'%}" alt class="w-px-40 h-auto rounded-circle" />
+                            </div>
+                          </div>
+                          <div class="flex-grow-1">
+                            <span class="fw-semibold d-block">{{user.user.username}}</span>
+                            <small class="text-muted">Staff</small>
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <div class="dropdown-divider"></div>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="{% url 'logout'%}">
+                        <i class="bx bx-power-off me-2"></i>
+                        <span class="align-middle">Log Out</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!--/ User -->
+              </ul>
+            </div>
+          </nav>
+
+          <!-- / Navbar -->
+
+          <!-- Content wrapper -->
+          <div class="content-wrapper">
+            <!-- Content -->
+
+            <div class="container-xxl flex-grow-1 container-p-y">
+              {% comment %} <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Account Settings /</span> Account</h4> {% endcomment %}
+
+              <div class="row">
+                
+                
+                <div class"col-md-12">
+                  <div class="card">
+                    <h5 class="card-header">filter leads</h5>
+                    <div class="card-body">
+                      <div class="row justify-content-between">
+                        <div class="col-12">
+                          <form action="{% url 'filter' %}" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                              <div class="row">
+                                <div class="col-4">
+                                  <label for="defaultFormControlInput" class="form-label">to</label>
+                                  <input
+                                    type="date"
+                                    class="form-control"
+                                    id="defaultFormControlInput"
+                                    placeholder="Date"
+                                    name="todate"
+                                  />
+                                </div>
+                                <div class="col-4">
+                                  <label for="defaultFormControlInput" class="form-label">from</label>
+                                  <input
+                                    type="date"
+                                    class="form-control"
+                                    id="defaultFormControlInput"
+                                    placeholder="Date"
+                                    name="fromdate"
+                                  />
+                                </div>
+                                
+                              </div>
+                              <div class="row">
+                                <div class="col-4">
+                                  <label for="defaultFormControlInput" class="form-label">Course</label>
+                                  <div class="select-item-list--single">
+                                    <div class="directorist-select directorist-select-multi" id="multiSelect" data-isSearch="true" data-multiSelect="['B.Arch', 'B.Com', 'B.Des', 'B.Ed', 'B.Pharm', 'B.Sc', 'B.Sc (Agriculture)', 'B.Sc (Aviation)', 'B.Sc (Computers)', 'B.Sc (Medicine)', 'B.Sc (Nursing)', 'BA', 'Bachelors', 'BAMS', 'BBA/BBM', 'BCA', 'BDS', 'BE/B.Tech', 'BHM', 'BMM', 'BVSc', 'D.Litt', 'Executive MBA', 'LLB', 'LLD', 'LLM', 'M.Arch', 'M.Ch', 'M.Com', 'M.Des', 'M.Ed', 'M.Pharm', 'M.Phil', 'M.Phil/Ph.D', 'M.Planning', 'M.Sc', 'M.Sc (Agriculture)', 'M.Sc (Aviation)', 'M.Sc (Hotel Management)', 'M.Sc (Medicine)', 'M.Sc (Nursing)', 'MA', 'Master of Physiotherapy(MPT)', 'Masters', 'MBA/PGDM', 'MBBS', 'MCA', 'MD', 'MDS', 'ME/M.Tech', 'MHM', 'MMC', 'MS', 'MVSc', 'Ph.D', 'BHMS', 'B.Planning', 'Bachelor of Physiotherapy(BPT)', 'BUMS', 'MHA', 'M.P.Ed', 'BFA', 'B.P.Ed', 'BBA (Aviation)', 'Training Programs', 'Bachelors (Animation & Graphic Design)', 'B.Sc (Hotel Management)', 'MMS', 'B.F.Sc', 'M.F.Sc', 'MPH', 'BPH', 'MSW', 'BSW', 'BA LLB', 'BS', 'BHM (Hospital)', 'AME', 'Polytechnic']" >               
+                                        <input type="hidden" name="course" class="form-control" aria-describedby="defaultFormControlHelp">
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                <div class="col-4">
+                                  <label for="defaultFormControlInput" class="form-label">State</label>
+                                  <div class="select-item-list--single">
+                                    <div class="directorist-select directorist-select-multi" id="multiSelect2" data-isSearch="true" data-multiSelect="['Bihar', 'Andhra Pradesh', 'Maharashtra', 'Uttar Pradesh']" >               
+                                        <input type="hidden" name="state" class="form-control" aria-describedby="defaultFormControlHelp">
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-4">
+                                  <label for="defaultFormControlInput" class="form-label">City</label>
+                                  <div class="select-item-list--single">
+                                    <div class="directorist-select directorist-select-multi" id="multiSelect3" data-isSearch="true" data-multiSelect="['Port Blair', 'Visakhapatnam', 'Tirupati', 'Chittoor', 'Pakala', 'Kadapa', 'Madanapalle', 'Eluru', 'Tadepalligudem', 'Adoni', 'Ongole', 'Kurnool', 'East Godavari', 'Srisailam', 'Guntur', 'Anantapur', 'Kakinada', 'Srikakulam', 'Nuzvid', 'Prakasam', 'Vijayawada', 'Bhimavaram', 'Ananthapur', 'Nellore', 'Nandyal', 'Chirala', 'Guduru', 'Jangareddigudem', 'Amaravathi', 'Rajampet', 'Rajahmundhry', 'Mangalagiri', 'Narasaraopet', 'Anandapuram', 'Kovvur', 'Anakapalle', 'Bapatla', 'Vissannapet', 'Tenali', 'Lohit', 'Itanagar', 'Naharlagun', 'Roing', 'Dibrugarh', 'Cachar', 'Jorhat', 'Bongaigaon', 'Guwahati', 'Sibsagar', 'Kokrajhar', 'Sivasagar', 'Sonitpur', 'Hailakandi', 'Silchar', 'Dhemaji', 'Diphu', 'Lakhimpur', 'Nagaon', 'Dhubri', 'Darrang', 'Barpeta', 'Siwan', 'Bhagalpur', 'Patna', 'Sitamarhi', 'Arrah', 'Saharsa', 'Gopalganj', 'Aurangabad', 'Muzaffarpur', 'Kishanganj', 'Araria', 'Samastipur', 'Begusarai', 'Rohtas', 'Darbhanga', 'Bettiah', 'Buxar', 'Gaya', 'Vaishali', 'Munger', 'Lakhisarai', 'Saran', 'Purnea', 'Motihari', 'Madhubani', 'Chapra', 'Sasaram', 'Nalanda', 'Biharsharif', 'Madhepura', 'Purba Champaran', 'Supaul', 'Arwal', 'Hajipur', 'Chandigarh', 'Raigarh', 'Jagdalpur', 'Ambikapur', 'Kanker', 'Bilaspur', 'Raipur', 'Jashpur', 'Rajnandgaon', 'Jaijaipur', 'Korba', 'Janjgir', 'Bhilai', 'Balod', 'Kawardha', 'Manendragarh', 'Daman', 'New Delhi', 'North Goa', 'South Goa', 'Tiswadi', 'Surat', 'Ahmedabad', 'Palanpur', 'Navsari', 'Bhuj', 'Gandhinagar', 'Bhavnagar', 'Rajkot', 'Jamnagar', 'Godhra', 'Valsad', 'Bharuch', 'Vadodara', 'Baroda', 'Dadra & Nagar Haveli', 'Charkhi Dadri', 'Rohtak', 'Fatehabad', 'Karnal', 'Gurgaon', 'Rewari', 'Narwana', 'Mewat', 'Faridabad', 'Bhiwani', 'Sonepat', 'Panchkula', 'Sirsa', 'Bahadurgarh', 'Jind', 'Palwal', 'Jhajjar', 'Ambala', 'Narnaul', 'Mahendragarh', 'Hisar', 'Shimla', 'Una', 'Rampur', 'Bilaspur', 'Kangra', 'Dharamshala', 'Baddi', 'Mandi', 'Jammu', 'Udhampur', 'Pulwama', 'Srinagar', 'Baramulla', 'Shopin', 'Reasi', 'Kupwara', 'Kulgam', 'Ranchi', 'Dhanbad', 'Garhwa', 'Bokaro', 'Jamshedpur', 'Kodarma', 'Hazaribagh', 'Giridih', 'Deoghar', 'Chaibasa', 'Lohardaga', 'Gumla', 'Dumka', 'Harihar', 'Bangalore', 'Dharwad', 'Nagamangala', 'Gulbarga', 'Udupi', 'Bagalkot', 'Mysore', 'Chintamani', 'Bidar', 'Mangalore', 'Belgaum', 'Bijapur', 'Hubli', 'Mandya', 'Chitradurga', 'Tumkur', 'Davanagere', 'Shimoga', 'Bellary', 'Davangere', 'Dakshin Kannada', 'Ranibennur', 'Bangalore Rural', 'Kolar', 'Mulbagal', 'Belagavi', 'Koppal', 'Chincholi', 'Calicut', 'Thiruvananthapuram', 'Trivandrum', 'Kollam', 'Ernakulam', 'Kozhikode', 'Kottayam', 'Kannur', 'Perinthalmanna', 'Mavelikara', 'Kochi', 'Palakkad', 'Alappuzha', 'Idukki', 'Thrissur', 'Pathanamthitta', 'Alatur', 'Ranny', 'Adoor', 'Ottapalam', 'Kasaragod', 'Tirur', 'Nilambur', 'Malappuram', 'Katni', 'Tikamgarh', 'Gwalior', 'Bhopal', 'Morena', 'Mandsaur', 'Dindori', 'Anuppur', 'Rajgarh', 'Shivpuri', 'Chhindwara', 'Indore', 'Rewa', 'Barwani', 'Umaria', 'Narsinghpur', 'Jabalpur', 'Balaghat', 'Sagar', 'Bhind', 'Burhanpur', 'Datia', 'Raisen', 'Jhabua', 'Ujjain', 'Seoni', 'Neemuch', 'Ratlam', 'Pune', 'Solapur', 'Mumbai', 'Shegaon', 'Thane', 'Nashik', 'Raigarh', 'Nagpur', 'Navi Mumbai', 'Karanja', 'Satara', 'Kalyan', 'Amravati', 'Ahmednagar', 'Sangli', 'Wardha', 'Yavatmal', 'Hingoli', 'Aurangabad', 'Karad', 'Kolhapur', 'Beed', 'Barshi', 'Shirpur', 'Nanded', 'Dhule', 'Gondiya', 'Chandrapur', 'Bhandara', 'Buldana', 'Jalgaon', 'Jalna', 'Shahapur', 'Gadchiroli', 'Akola', 'Osmanabad', 'Ambajogai', 'Pandharpur', 'Palghar', 'Sindhudurg', 'Majalgoan', 'Tuljapur', 'Nandurbar', 'Sakoli', 'Parbhani', 'Chiplun', 'Latur', 'Panvel', 'Vidisha', 'Sawantwadi', 'Vasai', 'Amalner', 'Washim', 'Ratnagiri', 'Buldhana', 'Imphal', 'Shillong', 'East Khasi Hills', 'West Khasi Hills', 'Aizawl', 'Dimapur', 'Kohima', 'Cuttack', 'Koraput', 'Bhubaneswar', 'Rourkela', 'Baripada', 'Baleswar', 'Subarnapur', 'Berhampur', 'Kendrapara', 'Bhadrak', 'Balangir', 'Bhawanipatna', 'Sundergarh', 'Jharsuguda', 'Dhenkanal', 'Rayagada', 'Jeypore', 'Balasore', 'Sambalpur', 'Bargarh', 'Jajapur', 'Pondicherry', 'Pathankot', 'Patiala', 'Fatehgarh Sahib', 'Amritsar', 'Ludhiana', 'Bassi', 'Gurdaspur', 'Hoshiarpur', 'Mohali', 'Jodhpur', 'Bundi', 'Jaipur', 'Dausa', 'Kota', 'Udaipur', 'Alwar', 'Churu', 'Bharatpur', 'Bhilwara', 'Ganganagar', 'Ajmer', 'Baran', 'Pratapgarh', 'Sikar', 'Pali', 'Jaisalmer', 'Jhunjhunu', 'Barmer', 'Bikaner', 'Nagaur', 'Dholpur', 'Hanumangarh', 'Arni', 'Chennai', 'Salem', 'Coimbatore', 'Karur', 'Tuticorin', 'Dindigul', 'Erode', 'Tirupattur', 'Kanchipuram', 'Palani', 'Tiruchirappalli', 'Pudukkottai', 'Tiruppur', 'Coonoor', 'Sivaganga', 'Kumbakonam', 'Namakkal', 'Hosur', 'Dharmapuri', 'The Nilgiris', 'Vellore', 'Sivakasi', 'Mettupalayam', 'Karaikudi', 'Ariyalur', 'Aundipatti', 'Mayiladuthurai', 'Sathyamangalam', 'Madurai', 'Theni', 'Srivilliputhur', 'Villupuram', 'Ramanathapuram', 'Hyderabad', 'Warangal', 'Hanamkonda', 'Karimnagar', 'Siddipet', 'Khammam', 'Nalgonda', 'Vikarabad', 'Nirmal', 'Mahabubnagar', 'North Tripura', 'Allahabad', 'Ghazipur', 'Ghaziabad', 'Mathura', 'Kanpur', 'Aligarh', 'Azamgarh', 'Meerut', 'Bareilly', 'Shahjahanpur', 'Saharanpur', 'Noida', 'Greater Noida', 'Rae Bareli', 'Ballia', 'Sambhal', 'Lucknow', 'Jaunpur', 'Kanpur Dehat', 'Lalitpur', 'Deoria', 'Sant Kabir Nagar', 'Gorakhpur', 'Varanasi', 'Bulandshahr', 'Mainpuri', 'Agra', 'Etawah', 'Etah', 'Lakhimpur', 'Chandauli', 'Amroha', 'Moradabad', 'Banda', 'Fatehpur', 'Bagpat', 'Bahraich', 'Bijnor', 'Balrampur', 'Sonbhadra', 'Pilibhit', 'Maharajganj', 'Mau', 'Jhansi', 'Kannauj', 'Hathras', 'Padrauna', 'Farrukhabad', 'Kashanj', 'Faizabad', 'Muzaffarnagar', 'Gautam Budh Nagar', 'Auraiya', 'Mahoba', 'Badaun', 'Hapur', 'Dehradun', 'Ranikhet', 'Khatima', 'Champawat', 'Roorkee', 'Rishikesh', 'Rudra pur', 'Haldwani', 'Udham Singh Nagar', 'Kolkata', 'Kharagpur', 'Barasat', 'Malda', 'Uttar Dinajpur', 'Raipur', 'Arambagh', 'Siliguri', 'South 24 Parganas', 'Birbhum', 'Raiganj', 'Bankura', 'Durgapur', 'Medinipur', 'Haldia', 'Howrah', 'Santipur', 'Bardhaman', 'Belda', 'Murshidabad', 'Tamluk', 'Hooghly', 'Burwan', 'Cooch Behar']" >               
+                                        <input type="hidden" name="city" class="form-control" aria-describedby="defaultFormControlHelp">
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                          </form>
+                        </div>
+
+                        <div class="col-5">
+                          <div class="col-lg-12 mb-12 mb-xl-0">
+                            <div class="demo-inline-spacing mt-3">
+                              <small class="text-light fw-semibold">Created</small>
+                              <div class="list-group">
+                                {% for le in leads%}
+                                    <a href="{% url 'push-history'%}?uuid={{le.lead_id}}" class="list-group-item list-group-item-action"
+                                      >{{le.quantity}}-{{le.date_created}}</a
+                                    >
+                                {% endfor %}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- / Content -->
+
+            <!-- Footer -->
+            <footer class="content-footer footer bg-footer-theme">
+              <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+                <div class="mb-2 mb-md-0">
+                  ©
+                  <script>
+                    document.write(new Date().getFullYear());
+                  </script>
+                  , made by
+                  <a href="javascript:void()" class="footer-link fw-bolder">Shailesh Rawat</a>
+                </div>
+                
+              </div>
+            </footer>
+            <!-- / Footer -->
+
+            <div class="content-backdrop fade"></div>
+          </div>
+          <!-- Content wrapper -->
+        </div>
+        <!-- / Layout page -->
+      </div>
+
+      <!-- Overlay -->
+      <div class="layout-overlay layout-menu-toggle"></div>
+    </div>
+      
+      
+
+    <!-- / Layout wrapper -->
+
+    
+
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="{% static 'assets/vendor/libs/jquery/jquery.js'%}"></script>
+    <script src="{% static 'assets/vendor/libs/popper/popper.js'%}"></script>
+    <script src="{% static 'assets/vendor/js/bootstrap.js'%}"></script>
+    <script src="{% static 'assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js'%}"></script>
+
+    <script src="{% static 'assets/vendor/js/menu.js'%}"></script>
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+
+    <!-- Main JS -->
+    <script src="{% static 'js/script.js'%}"></script>
+    <script>
+      // pureScriptSelect('#select');
+      pureScriptSelect('#multiSelect');
+      pureScriptSelect('#multiSelect2');
+      pureScriptSelect('#multiSelect3');
+      pureScriptSelect('#selectImg');
+      pureScriptSelect('#selectIcon');
+    </script>
+    <script src="{% static 'assets/js/main.js'%}"></script>
+
+    <!-- Page JS -->
+    <script src="{% static 'assets/js/pages-account-settings-account.js'%}"></script>
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html>

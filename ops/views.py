@@ -371,3 +371,97 @@ def client_detail(request,pk):
     
     return render(request, 'client-detail.html', context)
 
+def filter_lead(request):
+    if request.method == "POST":
+        todate = request.POST['todate']
+        fromdate = request.POST['fromdate']
+        courses = request.POST['course']
+        cities = request.POST['city']
+        states = request.POST['state']
+        courses = courses.replace('[','')
+        courses = courses.replace(']','')
+        courses = courses.replace('"','')
+        cities = cities.replace('[','')
+        cities = cities.replace(']','')
+        cities = cities.replace('"','')
+        states = states.replace('[','')
+        states = states.replace(']','')
+        states = states.replace('"','')
+        courses = courses.split(',')
+        states = states.split(',')
+        cities = cities.split(',')
+        all_leads = {}
+        total_leads = []
+
+        if courses[0] != "":
+            for i in courses:
+                all_leads[i] = Heap.objects.filter(course=i)
+        else:
+            all_leads['all'] = Heap.objects.all()
+
+        if states[0] == "" and cities[0] == "":
+            for i in all_leads.keys():
+                for j in all_leads[i]:
+                    total_leads.append(j)
+        else:
+            for i in all_leads.keys():
+                for j in all_leads[i]:
+                    flag = False
+                    for state in states:
+                        if j.state == state:
+                            total_leads.append(j)
+                            flag = True
+                            break
+                    if flag:
+                        continue
+                    for city in cities:
+                        if j.city==city:
+                            total_leads.append(j)
+                    
+        fin_leads = []
+        for i in total_leads:
+            if i.date_created != None:
+                date_created = i.date_created.split('-')
+                date_check_to = todate.split('-')
+                date_check_from = fromdate.split('-')
+                
+                for j in range(len(date_check_to)+1):
+                    if j==len(date_check_to):
+                        fin_leads.append(i)
+                        break
+                    if int(date_check_to[j])>int(date_created[j]) and int(date_check_from[j])<int(date_created[j]):
+                        fin_leads.append(i)
+                        break
+                    elif int(date_check_to[j])<int(date_created[j]) or int(date_check_from[j])>int(date_created[j]):
+                        break
+
+        print(len(fin_leads), courses)
+        
+        lead_object = []
+        camp_object = Campaign.objects.filter(camp_name="filter").first()
+        for lead in fin_leads:
+            lead_object.append([lead.name, lead.phone, lead.course, lead.city, lead.state, lead.date_created])
+         
+        headings = ['Name','Phone', 'Course', 'City', 'State', 'Date']
+        now = datetime.now()
+
+        current_time = now.strftime("%H-%M-%S")
+        path = os.path.join(settings.MEDIA_ROOT, f'{request.user.username}-{camp_object.camp_name}-{current_time}.csv')
+        with open(path, 'w', encoding='UTF8', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(headings)
+            writer.writerows(lead_object)
+        
+        new_lead = LeadFile.objects.create(campaign=camp_object, leads=path, quantity=len(lead_object))
+        new_lead.save()
+        
+        return redirect('filter')
+
+    else:
+        camp_object = Campaign.objects.filter(camp_name="filter").first()
+        leads = LeadFile.objects.filter(campaign=camp_object)
+        context = {
+            'leads': leads
+        }
+        return render(request, 'filter-page.html', context)
+

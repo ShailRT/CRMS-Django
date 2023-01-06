@@ -16,5 +16,6 @@ urlpatterns = [
     path('heap-push/', views.heap_upload, name='heap-push'),
 
     path('create-user/', views.create_user, name="create-user"),
-    path('client-detail/<str:pk>/', views.client_detail, name="client-detail")
+    path('client-detail/<str:pk>/', views.client_detail, name="client-detail"),
+    path('filter/', views.filter_lead, name="filter")
 ]
