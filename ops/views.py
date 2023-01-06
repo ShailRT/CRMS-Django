@@ -75,8 +75,8 @@ def campaign(request,pk):
         cities = list(camp.city.split(','))
         states = list(camp.state.split(','))
         all_leads = {}
-        to_date = request.GET.get('todate')
-        from_date = request.GET.get('fromdate')
+        todate = request.GET.get('todate')
+        fromdate = request.GET.get('fromdate')
 
         if courses[0] != "":
             for i in courses:
@@ -105,21 +105,19 @@ def campaign(request,pk):
             
 
         fin_leads = []
+        todate = tuple(map(int, todate.split('-')))
+        todate = datetime(*todate)
+        fromdate = tuple(map(int, fromdate.split('-')))
+        fromdate = datetime(*fromdate)
         for i in total_leads:
             if i.date_created != None:
-                date_created = i.date_created.split('-')
-                date_check_to = to_date.split('-')
-                date_check_from = from_date.split('-')
-                
-                for j in range(len(date_check_to)+1):
-                    if j==len(date_check_to):
+                date_created = tuple(map(int, i.date_created.split('-')))
+                date_created = datetime(*date_created)
+                if date_created == todate or date_created == fromdate:
+                    fin_leads.append(i)
+                elif date_created<todate:
+                    if date_created>fromdate:
                         fin_leads.append(i)
-                        break
-                    if int(date_check_to[j])>int(date_created[j]) and int(date_check_from[j])<int(date_created[j]):
-                        fin_leads.append(i)
-                        break
-                    elif int(date_check_to[j])<int(date_created[j]) or int(date_check_from[j])>int(date_created[j]):
-                        break
 
         tot_lead = len(fin_leads)
         uuids = ""
@@ -418,24 +416,19 @@ def filter_lead(request):
                             total_leads.append(j)
                     
         fin_leads = []
+        todate = tuple(map(int, todate.split('-')))
+        todate = datetime(*todate)
+        fromdate = tuple(map(int, fromdate.split('-')))
+        fromdate = datetime(*fromdate)
         for i in total_leads:
             if i.date_created != None:
-                date_created = i.date_created.split('-')
-                date_check_to = todate.split('-')
-                date_check_from = fromdate.split('-')
-                
-                for j in range(len(date_check_to)+1):
-                    if j==len(date_check_to):
+                date_created = tuple(map(int, i.date_created.split('-')))
+                date_created = datetime(*date_created)
+                if date_created == todate or date_created == fromdate:
+                    fin_leads.append(i)
+                elif date_created<todate:
+                    if date_created>fromdate:
                         fin_leads.append(i)
-                        break
-                    if int(date_check_to[j])>=int(date_created[j]) and int(date_check_from[j])<=int(date_created[j]):
-                        fin_leads.append(i)
-                        break
-                    elif int(date_check_to[j])<int(date_created[j]) or int(date_check_from[j])>int(date_created[j]):
-                        print(int(date_check_from[j]),int(date_created[j]))
-                        break
-
-        print(len(fin_leads), courses)
         
         lead_object = []
         camp_object = Campaign.objects.filter(camp_name="filter").first()
