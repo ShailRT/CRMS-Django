@@ -33,26 +33,57 @@ def index(request):
 @login_required(login_url='signin')
 def push(request, pk):
     ops_user = OpsUser.objects.filter(user=request.user).first()
-    camp_object = Campaign.objects.filter(user=ops_user, camp_name=pk).first()
+    camp = Campaign.objects.filter(user=ops_user, camp_name=pk).first()
     qty = int(request.GET.get('quantity'))
+    courses = list(camp.course.split(','))
+    cities = list(camp.city.split(','))
+    states = list(camp.state.split(','))
     counter = 0
     sent = 0
     uuids = ""
     leads = []
     heap_qty = len(Heap.objects.all())
-    while qty>0 and heap_qty>=counter and len(Heap.objects.filter(city=camp_object.city, course=camp_object.course)) > counter:
-        city = list(camp_object.city.split(','))[0]
-        course = list(camp_object.course.split(','))[0]
-        lead = Heap.objects.filter(city=city, course=course)[counter]
-        if camp_object.client not in lead.users.all():
-            leads.append(lead)
-            uuids+=f"{lead.lead_id} "
-            qty-=1
-            sent+=1
-        counter+=1
+    all_leads = {}
+    total_leads = []
+    if courses[0] != "":
+            for i in courses:
+                all_leads[i] = Heap.objects.filter(course=i)
+    else:
+        all_leads['all'] = Heap.objects.all()
+
+    if states[0] == "" and cities[0] == "":
+        for i in all_leads.keys():
+            for j in all_leads[i]:
+                total_leads.append(j)
+    else:
+        for i in all_leads.keys():
+            for j in all_leads[i]:
+                flag = False
+                for state in states:
+                    if j.state == state:
+                        total_leads.append(j)
+                        flag = True
+                        break
+                if flag:
+                    continue
+                for city in cities:
+                    if j.city==city:
+                        total_leads.append(j)
+            
+    if qty<=len(total_leads):
+        leads = total_leads[:qty]
+        sent=qty 
+    else:
+        leads = total_leads
+        sent = len(total_leads)
+
+    for lead in leads:
+        uuids+=f"{lead.lead_id} "
+
+    
 
     headings = ['Name','Phone', 'Course', 'City', 'State', 'Date']
-    return render(request, 'push.html', {'leads': leads, 'headings': headings, 'camp_object': camp_object, 'uuids': uuids, 'user': request.user, 'sent': sent})
+    return render(request, 'push.html', {'leads': leads, 'headings': headings, 'camp_object': camp, 'uuids': uuids, 'user': request.user, 'sent': sent})
 
 @login_required(login_url='signin')
 def campaign(request,pk):
@@ -368,6 +399,7 @@ def client_detail(request,pk):
     
     return render(request, 'client-detail.html', context)
 
+@login_required(login_url='signin')
 def filter_lead(request):
     if request.method == "POST":
         todate = request.POST['todate']

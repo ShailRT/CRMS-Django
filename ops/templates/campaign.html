@@ -472,7 +472,7 @@
                               </div>
                             </form>
                               <div class="row mt-3">
-                                <div class="col-2">
+                                <div class="col-2 me-2">
                                   <form method="POST" action="{% url 'create-lead' pk=campaign.id %}">
                                     {% csrf_token %}
                                     <input type="hidden" value="{{uuids}}" name="uuids">
