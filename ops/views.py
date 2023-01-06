@@ -428,10 +428,11 @@ def filter_lead(request):
                     if j==len(date_check_to):
                         fin_leads.append(i)
                         break
-                    if int(date_check_to[j])>int(date_created[j]) and int(date_check_from[j])<int(date_created[j]):
+                    if int(date_check_to[j])>=int(date_created[j]) and int(date_check_from[j])<=int(date_created[j]):
                         fin_leads.append(i)
                         break
                     elif int(date_check_to[j])<int(date_created[j]) or int(date_check_from[j])>int(date_created[j]):
+                        print(int(date_check_from[j]),int(date_created[j]))
                         break
 
         print(len(fin_leads), courses)
