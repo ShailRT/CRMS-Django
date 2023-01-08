@@ -486,7 +486,8 @@ def filter_lead(request):
         camp_object = Campaign.objects.filter(camp_name="filter").first()
         leads = LeadFile.objects.filter(campaign=camp_object)
         context = {
-            'leads': leads
+            'leads': leads,
+            'user': request.user
         }
         return render(request, 'filter-page.html', context)
 

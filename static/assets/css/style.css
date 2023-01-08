@@ -113,7 +113,7 @@ body{
     padding: 2.5px 15px;
     border-radius: 4px;
     margin: -4px;
-    min-height: 42px;
+    min-height: 100px;
 }
 
 .directorist-select.directorist-select-multi .directorist-select__container .directorist-select__label input{

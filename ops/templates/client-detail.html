@@ -226,11 +226,19 @@
                                 type="text"
                                 class="form-control"
                                 id="defaultFormControlInput"
-                                placeholder="Name"
                                 aria-describedby="defaultFormControlHelp"
                                 name="name"
                               />
-
+                              
+                              <label for="defaultFormControlInput" class="form-label">Quantity</label>
+                              <input
+                                type="number"
+                                class="form-control text-dark"
+                                id="defaultFormControlInput"
+                                aria-describedby="defaultFormControlHelp"
+                                name="quantity"
+                                required
+                              />
                               
                               <div class="row">
                                 <div class="col-4">
@@ -260,15 +268,6 @@
                                 </div>
                               </div>
                               
-                              <label for="defaultFormControlInput" class="form-label">Quantity</label>
-                              <input
-                                type="number"
-                                class="form-control"
-                                id="defaultFormControlInput"
-                                placeholder="Quantity"
-                                aria-describedby="defaultFormControlHelp"
-                                name="quantity"
-                              />
                               {% comment %} <div id="defaultFormControlHelp" class="form-text">
                                 We'll never share your details with anyone else.
                               </div> {% endcomment %}
@@ -277,7 +276,7 @@
                               <label for="formFile" class="form-label">Default file input example</label>
                               <input class="form-control" type="file" id="formFile" name="csv_upload" />
                             </div> {% endcomment %}
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary mt-5">Submit</button>
                           </form>
                         </div>
 
