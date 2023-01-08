@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-r%hog%6xjte7z9=xbr6x4vb084xeq7q)8+3po45$6x6)fjj-3%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['44.224.20.144','*']
 
 
 # Application definition
@@ -42,9 +42,6 @@ INSTALLED_APPS = [
     'ops',
     'client',
 
-    # 'ebhealthcheck.apps.EBHealthCheckConfig',
-
-    
 ]
 
 MIDDLEWARE = [
